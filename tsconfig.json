@@ -9,7 +9,7 @@
       "forceConsistentCasingInFileNames": true,
       "baseUrl": "./",
       "paths": {
-        "xpell": ["./node_modules/xpell"]
+        "xpell": ["./node_modules/xpell-ui"]
       },
       "outDir": "./dist",
       "sourceMap": true,

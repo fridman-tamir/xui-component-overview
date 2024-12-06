@@ -6,16 +6,19 @@ import {
     Xpell as _x,
     _xlog, //Xpell logger,
     XUI, //Xpell UI module,
-    XUIObject, //Xpell UI object,
     XData as _xd, //Xpell real-time data cache module,
     _xem, //Xpell event manager,
 } from "xpell"
+
+import { XField } from "./Components/XField"
+
 
 async function main() {
     _x.verbose = true // enable verbose mode (xlog)
     _x.info() // show xpell engine info
     _x.start() // start xpell engine (frame loop)
     _x.loadModule(XUI)
+    XUI.createPlayer("xplayer")
 
 
     // XUI (Xpell UI module) is a module that provides a way to create and manage UI elements
@@ -39,7 +42,7 @@ async function main() {
     // view/div, label, link, button, text, password, input, textarea, video, image, list, form, webcam, xhtml, 
     // svg, circle, rect, ellipse, line, polyline, polygon, path
     // The xhtml element is used to create custom elements using HTML code, add the _html_tag attribute to define the tag name
-    // Use XUI.loadObject or XUI.loadControl to create and mount an element to the DOM
+    // Use XUI.add create and mount an element to the DOM
 
 
 
@@ -48,54 +51,7 @@ async function main() {
 
 
 
-    /**
-     * XField
-     * A simple input field element
-     * @param {Object} data - the data object
-     * @param {String} data._label - the label of the field
-     * @param {String} data._placeholder - the placeholder of the field
-     * @param {String} data._value - the value of the field
-     */
-   class XField extends XUIObject {
-
-        static _xtype = "field"
-
-
-        _label = "Field"
-        _placeholder: any
-        _value: any
-
-
-        constructor(data) {
-            const defaults = {
-                _type: XField._xtype,
-                class: "xfield",
-                _html_tag: "div",
-            }
-            super(data,defaults,true)
-            this.parse(data)
-
-            this.append({
-                _type: "label",
-                _text: this._label,
-                _id: this._id + "-label",
-                class: "xfield-label"
-            })
-
-            this.append({
-                _type: "input",
-                _id: this._id + "-input",
-                class: "xfield-input",
-                placeholder: this._placeholder,
-                value: this._value
-            })
-
-            this.addNanoCommand("reset",(xcmd,xobj) => {
-                XUI._o[this._id + "-input"]._text = ""
-            })
-
-        }
-   }
+    
 
 
    XUI.importObject(XField._xtype,XField)
@@ -104,7 +60,6 @@ async function main() {
     const mainView = {
         _type: "view",
         _id: "main-view",
-        _parent_element: "root",
         class: "main-view",
         _children: [
             {
@@ -122,39 +77,29 @@ async function main() {
                 _value: "mymail@text.com"
             },
             {
-                _type:"text",
-                _id:"mcmd",
-                value:"reset"
-            },
-            {
-                _type: "button",
-                _text: "Reset",
-                _on_click: (xobj) => {
-                    const cmd = XUI._o["mcmd"].dom.value
-                    console.log(cmd);
+                _type:"view",
+                style:"display:flex;justify-content:center;gap:10px;margin-top:10px;",
+                _children: [
+                    {
+                        _type: "button",
+                        _text: "Reset",
+                        _on_click: (xobj) => {
+                            XUI._o["name-field"].reset()
+                            XUI._o["email-field"].reset()
+                        }
+                    },
                     
-                    XUI._o["name-field"].run("this " + cmd)
-                    XUI._o["email-field"].run("this " + cmd)
-                }
-            },
-            {
-                _type:"textarea",
-                _id:"add-object",
-                _text:JSON.stringify({
-                    _type: "field",
-                    _label: "New Field",
-                    _placeholder: "Enter new field",
-                    _value: "New Value"
-                })
-            },
-            {
-                _type: "button",
-                _text: "Add Field",
-                _on_click: (xobj) => {
-                    const data = JSON.parse(XUI._o["add-object"].dom.value)
-                    XUI.add(data)
-                }
+                    {
+                        _type: "button",
+                        _text: "Submit",
+                        _on_click: (xobj) => {
+                            alert("Hello " + XUI._o["name-field"]._text + " your email is " + XUI._o["email-field"]._text)
+                        }
+                    }
+                ]
+
             }
+            
             
         ]
     }
