@@ -1,6 +1,5 @@
-# spinning image
-
-use this project as a template for new projects
+# xui overview
+Xpell UI (XUI) mproject overview
 
 ## Installation
 
